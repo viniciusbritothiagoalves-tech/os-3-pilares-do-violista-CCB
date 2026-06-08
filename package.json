@@ -1,0 +1,13 @@
+{
+  "name": "os-3-pilares-do-violista-ccb",
+  "version": "1.0.0",
+  "description": "Landing page de vendas - Os 3 Pilares do Violista CCB",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0"
+  }
+}
