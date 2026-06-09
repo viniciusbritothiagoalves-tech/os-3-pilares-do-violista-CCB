@@ -3,335 +3,584 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Os 3 Pilares do Violista CCB</title>
+  <meta name="description" content="Aprenda os 3 pilares essenciais para tocar os hinos com segurança na viola.">
   
-  <title>Os 3 Pilares do Violista CCB — Método Prático</title>
-  <meta name="description" content="Domine a base técnica da viola na CCB. Corrija a posição da mão, empunhadura do arco e afinação com Thiago Brito. Método aplicado aos hinos.">
-  
-  <!-- Preconnect to Google Fonts -->
+  <!-- Preconnect and Load Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
   
-  <link rel="stylesheet" href="./style.css">
+  <style>
+    /* CSS RESET & VARIABLES */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg-color: #0b0b0f;
+      --card-bg: #121217;
+      --text-color: #f4f4f5;
+      --text-muted: #a1a1aa;
+      --primary-color: #FF0000; /* YouTube Red */
+      --primary-hover: #cc0000;
+      --accent-glow: rgba(255, 0, 0, 0.2);
+      --font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      font-family: var(--font-family);
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+      /* Premium radial background glow */
+      background-image: radial-gradient(circle at 50% 20%, #1e1111 0%, var(--bg-color) 60%);
+      overflow-x: hidden;
+    }
+
+    /* MAIN CONTAINER (VSL LAYOUT) */
+    .vsl-container {
+      width: 100%;
+      max-width: 780px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 1.75rem;
+      margin: auto 0;
+    }
+
+    /* HEADLINE */
+    .headline {
+      font-size: 2.25rem;
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.03em;
+      color: #ffffff;
+    }
+
+    .headline span.highlight {
+      color: var(--primary-color);
+      text-shadow: 0 0 20px rgba(255, 0, 0, 0.4);
+    }
+
+    /* VIDEO PLAYER & CONTAINER */
+    .video-container {
+      width: 100%;
+      position: relative;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 25px rgba(255, 0, 0, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background-color: #000000;
+      aspect-ratio: 16 / 9;
+    }
+
+    /* YouTube Iframe element */
+    #player {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      display: block;
+    }
+
+    /* TRANSPARENT CLICK INTERCEPTOR OVERLAY */
+    /* Blocks double clicks, title, logo, share clicks but lets us handle play/pause via JS */
+    .click-interceptor {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 6;
+      cursor: pointer;
+      background: transparent;
+      display: none;
+    }
+
+    /* CUSTOM COVER / THUMBNAIL OVERLAY */
+    .video-cover {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-size: cover;
+      background-position: center;
+      background-color: #121217;
+      /* Fallback to gradient if capa-video.jpg does not exist */
+      background-image: url('./capa-video.jpg'), linear-gradient(135deg, #18181c 0%, #0c0c0e 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 8;
+      transition: opacity 0.5s ease, visibility 0.5s ease;
+    }
+
+    .video-cover::before {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.4);
+      top: 0;
+      left: 0;
+      pointer-events: none;
+    }
+
+    /* PULSING PLAY BUTTON */
+    .play-button-wrapper {
+      position: relative;
+      z-index: 9;
+      width: 80px;
+      height: 80px;
+      background-color: var(--primary-color);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 30px rgba(255, 0, 0, 0.4);
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .play-button-wrapper svg {
+      width: 32px;
+      height: 32px;
+      fill: #ffffff;
+      margin-left: 4px; /* Align triangle optically */
+      transition: transform 0.3s ease;
+    }
+
+    .video-cover:hover .play-button-wrapper {
+      transform: scale(1.1);
+      background-color: #ff1a1a;
+      box-shadow: 0 0 40px rgba(255, 0, 0, 0.6);
+    }
+
+    .play-label {
+      margin-top: 1.25rem;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #ffffff;
+      z-index: 9;
+      letter-spacing: 0.02em;
+      opacity: 0.9;
+      text-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    .video-cover:hover .play-label {
+      opacity: 1;
+      transform: translateY(-2px);
+    }
+
+    /* CUSTOM PAUSE STATE OVERLAY (Only displays custom play button when paused) */
+    .custom-pause-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 7;
+      background: rgba(0, 0, 0, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none; /* Let click pass through to interceptor */
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .custom-pause-overlay.show {
+      opacity: 1;
+    }
+
+    /* CTA BUTTON & LINK */
+    .cta-wrapper {
+      margin-top: 0.5rem;
+    }
+
+    .btn-cta {
+      display: inline-block;
+      width: 100%;
+      max-width: 480px;
+      background-color: var(--primary-color);
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 1.25rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      padding: 1.15rem 2rem;
+      border-radius: 8px;
+      box-shadow: 0 8px 25px rgba(255, 0, 0, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      
+      /* Pulse animation */
+      animation: pulse 2s infinite ease-in-out;
+    }
+
+    .btn-cta:hover {
+      background-color: var(--primary-hover);
+      box-shadow: 0 10px 30px rgba(255, 0, 0, 0.5);
+      transform: translateY(-2px);
+    }
+
+    .btn-cta:active {
+      transform: translateY(1px);
+      box-shadow: 0 4px 15px rgba(255, 0, 0, 0.3);
+    }
+
+    /* Pulse Keyframes */
+    @keyframes pulse {
+      0% {
+        transform: scale(1);
+        box-shadow: 0 8px 25px rgba(255, 0, 0, 0.35);
+      }
+      50% {
+        transform: scale(1.025);
+        box-shadow: 0 12px 35px rgba(255, 0, 0, 0.55);
+      }
+      100% {
+        transform: scale(1);
+        box-shadow: 0 8px 25px rgba(255, 0, 0, 0.35);
+      }
+    }
+
+    /* FOOTER SECTION */
+    footer {
+      margin-top: auto;
+      padding-top: 3.5rem;
+      padding-bottom: 1rem;
+      width: 100%;
+      max-width: 650px;
+      text-align: center;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+    }
+
+    .footer-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.2s ease;
+      font-weight: 500;
+    }
+
+    .footer-link:hover {
+      color: #ffffff;
+      text-decoration: underline;
+    }
+
+    .disclaimer {
+      font-size: 0.7rem;
+      line-height: 1.4;
+      opacity: 0.6;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      padding-top: 0.75rem;
+    }
+
+    /* DELAYED REVEAL EFFECTS */
+    .delayed-element {
+      display: none;
+      opacity: 0;
+    }
+
+    .reveal-fade-in {
+      animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(25px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* MEDIA QUERIES (RESPONSIVENESS) */
+    @media (max-width: 600px) {
+      body {
+        padding: 1.5rem 0.75rem;
+        background-image: radial-gradient(circle at 50% 15%, #1e1111 0%, var(--bg-color) 70%);
+      }
+
+      .vsl-container {
+        gap: 1.25rem;
+      }
+
+      .headline {
+        font-size: 1.65rem;
+        letter-spacing: -0.02em;
+        padding: 0 0.25rem;
+      }
+
+      .video-container {
+        border-radius: 8px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
+      }
+
+      .play-button-wrapper {
+        width: 60px;
+        height: 60px;
+      }
+
+      .play-button-wrapper svg {
+        width: 24px;
+        height: 24px;
+        margin-left: 3px;
+      }
+
+      .play-label {
+        font-size: 0.85rem;
+        margin-top: 0.85rem;
+      }
+
+      .btn-cta {
+        font-size: 1.1rem;
+        padding: 1rem 1.5rem;
+        border-radius: 6px;
+      }
+
+      footer {
+        padding-top: 2.5rem;
+        font-size: 0.7rem;
+      }
+    }
+
+    @media (max-width: 380px) {
+      .headline {
+        font-size: 1.4rem;
+      }
+    }
+  </style>
 </head>
 <body>
 
-  <!-- HERO SECTION -->
-  <header class="hero-section">
-    <div class="container hero-container">
-      <h1 class="hero-headline">Você toca viola, mas sente que seu <span class="text-highlight-red">som</span> ainda não chegou onde poderia?</h1>
-      <p class="hero-subheadline">
-        Os 3 Pilares do Violista CCB corrige os fundamentos que ninguém ensinou — aplicado diretamente nos hinos que você já toca.
-      </p>
-      <a href="#compra" class="btn btn-primary btn-hero" id="cta-hero-anchor">
-        Quero melhorar meu som agora
+  <main class="vsl-container">
+    <!-- HEADLINE SECTION -->
+    <h1 class="headline">Anos tocando e o seu som ainda te <span class="highlight">ENVERGONHA</span>?</h1>
+
+    <!-- VIDEO PLAYER SECTION -->
+    <div class="video-container">
+      
+      <!-- YouTube Player Container -->
+      <div id="player"></div>
+
+      <!-- Transparent click interceptor (Prevents clicking title/logo/share buttons) -->
+      <div class="click-interceptor" id="clickInterceptor" onclick="handlePlayerClick()"></div>
+
+      <!-- Custom Pause overlay -->
+      <div class="custom-pause-overlay" id="pauseOverlay">
+        <div class="play-button-wrapper">
+          <svg viewBox="0 0 24 24">
+            <path d="M8 5v14l11-7z"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Custom Video Cover (capa-video.jpg loaded locally) -->
+      <div class="video-cover" id="videoCover" onclick="startVideo()">
+        <div class="play-button-wrapper">
+          <!-- Play Icon SVG -->
+          <svg viewBox="0 0 24 24">
+            <path d="M8 5v14l11-7z"/>
+          </svg>
+        </div>
+        <span class="play-label">Clique para assistir ao vídeo explicativo</span>
+      </div>
+
+    </div>
+
+    <!-- CALL TO ACTION (CTA) - DELAYED -->
+    <div class="cta-wrapper delayed-element" id="cta-section">
+      <a href="https://pay.kiwify.com.br/MpZ3yqi" target="_blank" rel="noopener noreferrer" class="btn-cta" id="cta-vsl">
+        Quero começar agora
       </a>
     </div>
-  </header>
+  </main>
 
-  <!-- O QUE TRAVA A MAIORIA -->
-  <section class="myths-truths-section">
-    <div class="container">
-      <div class="myths-container">
-        <h2 class="section-title text-center">A maioria dos violistas da CCB acredita que...</h2>
-        <ul class="myths-list">
-          <li>
-            <span class="icon icon-cross" aria-hidden="true">✘</span>
-            <span class="list-text">Basta tocar mais vezes que um dia melhora sozinho</span>
-          </li>
-          <li>
-            <span class="icon icon-cross" aria-hidden="true">✘</span>
-            <span class="list-text">O problema está no instrumento</span>
-          </li>
-          <li>
-            <span class="icon icon-cross" aria-hidden="true">✘</span>
-            <span class="list-text">Falta talento — alguns têm, outros não</span>
-          </li>
-          <li>
-            <span class="icon icon-cross" aria-hidden="true">✘</span>
-            <span class="list-text">As informações estão todas no programa mínimo</span>
-          </li>
-        </ul>
-      </div>
-
-      <div class="divider-gold"></div>
-
-      <div class="truths-container">
-        <h3 class="section-subtitle text-center">Mas o que realmente muda o seu som é:</h3>
-        <ul class="truths-list">
-          <li>
-            <span class="icon icon-check" aria-hidden="true">✔</span>
-            <span class="list-text">Corrigir a base que está travando tudo</span>
-          </li>
-          <li>
-            <span class="icon icon-check" aria-hidden="true">✔</span>
-            <span class="list-text">Entender o que você está fazendo errado — e por quê</span>
-          </li>
-          <li>
-            <span class="icon icon-check" aria-hidden="true">✔</span>
-            <span class="list-text">Aplicar isso nos hinos que você já conhece</span>
-          </li>
-        </ul>
-      </div>
+  <!-- FOOTER - DELAYED -->
+  <footer id="footer-section" class="delayed-element">
+    <div class="footer-links">
+      <a href="./politicas.html" class="footer-link">Políticas de Privacidade e Termos de Uso</a>
     </div>
-  </section>
-
-  <!-- O QUE VOCÊ VAI APRENDER -->
-  <section class="pillars-section">
-    <div class="container">
-      <h2 class="section-title text-center">Os 3 Pilares do Violista CCB</h2>
-      
-      <div class="pillars-grid">
-        <!-- Card 1 -->
-        <div class="pillar-card">
-          <div class="pillar-icon-wrapper">
-            <!-- Hand/Fingers Icon -->
-            <svg class="pillar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M10.05 4.575a2.25 2.25 0 1 0-3.15 3.15L9 9.975M19.5 8.25a2.25 2.25 0 1 1-4.5 0v3m0 0V8.25a2.25 2.25 0 1 0-4.5 0v5.25m4.5-5.25h.008M15 11.25V9a2.25 2.25 0 1 0-4.5 0v5.25M10.5 14.25v-3.375A2.625 2.625 0 0 0 7.875 8.25v6a6.75 6.75 0 0 0 13.5 0v-1.5a2.25 2.25 0 0 0-3.375-1.957M10.5 14.25h7.5" />
-            </svg>
-          </div>
-          <h3 class="pillar-card-title">Pilar 1: Forma de Mão</h3>
-          <p class="pillar-card-text">
-            A posição que compromete sua afinação, sua velocidade e seu conforto ao mesmo tempo — sem você perceber.
-          </p>
-        </div>
-
-        <!-- Card 2 -->
-        <div class="pillar-card">
-          <div class="pillar-icon-wrapper">
-            <!-- Bow Icon (representing violin/viola bow control) -->
-            <svg class="pillar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-              <circle cx="6" cy="18" r="1.5" />
-              <circle cx="18" cy="6" r="1.5" />
-            </svg>
-          </div>
-          <h3 class="pillar-card-title">Pilar 2: Empunhadura do Arco</h3>
-          <p class="pillar-card-text">
-            O ponto de partida de todo som bonito na viola. Pequenos ajustes aqui mudam completamente a qualidade do que você produz.
-          </p>
-        </div>
-
-        <!-- Card 3 -->
-        <div class="pillar-card">
-          <div class="pillar-icon-wrapper">
-            <!-- Musical Note Icon -->
-            <svg class="pillar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M9 9l10.5-3m0 0v11.25m0-11.25L9 9m0 0v11.25m9-6a3 3 0 11-6 0 3 3 0 016 0zm-9 3a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
-          </div>
-          <h3 class="pillar-card-title">Pilar 3: Afinação</h3>
-          <p class="pillar-card-text">
-            Não só afinar o instrumento. Desenvolver o ouvido para tocar afinado dentro da orquestra, nos hinos do Hinário 5.
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- PARA QUEM É -->
-  <section class="audience-section">
-    <div class="container audience-container">
-      <h2 class="section-title">Esse treinamento foi feito para você que...</h2>
-      <ul class="audience-list">
-        <li>
-          <span class="icon icon-check" aria-hidden="true">✔</span>
-          <span class="list-text">Toca viola na CCB há anos mas sente que tem um teto</span>
-        </li>
-        <li>
-          <span class="icon icon-check" aria-hidden="true">✔</span>
-          <span class="list-text">Aprendeu no sufoco, juntando informação aqui e ali</span>
-        </li>
-        <li>
-          <span class="icon icon-check" aria-hidden="true">✔</span>
-          <span class="list-text">Quer soar melhor nos cultos, mas não sabe por onde começar</span>
-        </li>
-        <li>
-          <span class="icon icon-check" aria-hidden="true">✔</span>
-          <span class="list-text">Nunca teve um professor que corrigisse sua base técnica</span>
-        </li>
-      </ul>
-    </div>
-  </section>
-
-  <!-- MIDDLE CTA -->
-  <section class="middle-cta-section">
-    <div class="container text-center">
-      <a href="#compra" class="btn btn-primary" id="cta-middle-anchor">
-        Quero melhorar meu som agora
-      </a>
-    </div>
-  </section>
-
-  <!-- SOBRE O CRIADOR -->
-  <section class="about-section">
-    <div class="container about-container">
-      <h2 class="section-title">Quem está por trás desse treinamento</h2>
-      <div class="about-content">
-        <p class="about-text">
-          Meu nome é Thiago Brito. Comecei no violino em 2011, migrei para a viola em 2016 — e passei anos tocando sem base técnica real, juntando um quebra-cabeça de informações espalhadas. Só quando fui atrás do que faltava é que meu som mudou de verdade. Criei esse treinamento para que você não precise levar anos para chegar onde eu cheguei.
-        </p>
-      </div>
-    </div>
-  </section>
-
-  <!-- SEÇÃO DE COMPRA -->
-  <section class="purchase-section" id="compra">
-    <div class="container purchase-container">
-      <p class="purchase-pre-title">Acesso imediato ao método completo.</p>
-      
-      <div class="purchase-grid">
-        <!-- Column 1: Premium Book Showcase -->
-        <div class="book-container">
-          <div class="book-preview">
-            <img src="./capa.png" alt="Capa do produto Os 3 Pilares do Violista CCB" width="500" height="500">
-          </div>
-        </div>
-        
-        <!-- Column 2: Offer Card -->
-        <div class="offer-card">
-          <div class="price-container">
-            <span class="price-old">De R$ 97,00</span>
-            <span class="price-current">Por R$ 47,00</span>
-            <p class="price-subtext">pagamento único</p>
-          </div>
-
-          <a href="https://pay.kiwify.com.br/MpZ3yqi" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-large btn-purchase" id="cta-purchase">
-            Garantir meu acesso
-          </a>
-
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- GARANTIA -->
-  <section class="guarantee-section">
-    <div class="container guarantee-container">
-      <div class="guarantee-badge-wrapper">
-        <!-- Elegante Guarantee Shield/Stamp SVG -->
-        <svg class="guarantee-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
-        </svg>
-      </div>
-      <h2 class="section-title">Garantia Incondicional</h2>
-      <p class="guarantee-text">
-        Garantia incondicional de 7 dias.
-      </p>
-    </div>
-  </section>
-
-  <!-- PERGUNTAS FREQUENTES (FAQ) -->
-  <section class="faq-section">
-    <div class="container faq-container">
-      <h2 class="section-title text-center">Perguntas Frequentes</h2>
-      
-      <div class="accordion">
-        <!-- Item 1 -->
-        <div class="faq-item">
-          <button class="faq-trigger" aria-expanded="false" aria-controls="faq-answer-1" id="faq-q-1">
-            <span class="faq-question">Para quem é esse treinamento?</span>
-            <span class="faq-arrow" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </span>
-          </button>
-          <div class="faq-content" id="faq-answer-1" role="region" aria-labelledby="faq-q-1">
-            <div class="faq-answer-inner">
-              Para violistas da CCB que já tocam mas sentem que a base técnica ainda trava o som — seja iniciante avançado ou músico com anos de prática.
-            </div>
-          </div>
-        </div>
-
-        <!-- Item 2 -->
-        <div class="faq-item">
-          <button class="faq-trigger" aria-expanded="false" aria-controls="faq-answer-2" id="faq-q-2">
-            <span class="faq-question">Como vou acessar?</span>
-            <span class="faq-arrow" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </span>
-          </button>
-          <div class="faq-content" id="faq-answer-2" role="region" aria-labelledby="faq-q-2">
-            <div class="faq-answer-inner">
-              Após a compra, você recebe o acesso imediato ao conteúdo em vídeo diretamente no seu e-mail.
-            </div>
-          </div>
-        </div>
-
-        <!-- Item 3 -->
-        <div class="faq-item">
-          <button class="faq-trigger" aria-expanded="false" aria-controls="faq-answer-3" id="faq-q-3">
-            <span class="faq-question">Funciona para quem toca violino também?</span>
-            <span class="faq-arrow" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </span>
-          </button>
-          <div class="faq-content" id="faq-answer-3" role="region" aria-labelledby="faq-q-3">
-            <div class="faq-answer-inner">
-              A base técnica de mão e arco é compartilhada entre os dois instrumentos. O conteúdo foi criado com foco na viola, mas violinistas também se beneficiam.
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- RODAPÉ SIMPLES -->
-  <footer class="footer-simple">
-    <div class="container text-center">
-      <p class="copyright">© 2026 Thiago Brito · Todos os direitos reservados</p>
-      <div class="footer-links">
-        <a href="./politicas.html" class="footer-link">Políticas de Privacidade e Termos de Uso</a>
-      </div>
-      <p class="footer-disclaimer">Este site é independente e de caráter estritamente educacional. Não possui qualquer vínculo oficial, patrocínio ou associação com a instituição Congregação Cristã no Brasil (CCB).</p>
-    </div>
+    <p class="copyright">© 2026 Thiago Brito · Todos os direitos reservados</p>
+    <p class="disclaimer">Este site é independente e de caráter estritamente educacional. Não possui qualquer vínculo oficial, patrocínio ou associação com a instituição Congregação Cristã no Brasil (CCB).</p>
   </footer>
 
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      // FAQ ACCORDION LOGIC
-      const faqItems = document.querySelectorAll('.faq-item');
+    // Load the YouTube Iframe Player API asynchronously
+    var tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+    var firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-      faqItems.forEach(item => {
-        const trigger = item.querySelector('.faq-trigger');
-        const content = item.querySelector('.faq-content');
+    var player;
+    var timer = null;
+    var delaySeconds = 220; // 3 minutos e 40 segundos = 220 segundos
+    var timeElapsed = 0;
+    var isTabActive = true;
+    var ctaRevealed = false;
 
-        trigger.addEventListener('click', () => {
-          const isActive = item.classList.contains('active');
+    // Monitor if the user changes tabs or leaves the page active area
+    document.addEventListener("visibilitychange", function() {
+      if (document.hidden) {
+        isTabActive = false;
+        stopTimer();
+      } else {
+        isTabActive = true;
+        // Resume timer if video is actively playing
+        if (player && player.getPlayerState() === 1) { // 1 is Playing in YouTube API
+          startTimer();
+        }
+      }
+    });
 
-          // Close all FAQ items (single-open behavior)
-          faqItems.forEach(otherItem => {
-            otherItem.classList.remove('active');
-            const otherContent = otherItem.querySelector('.faq-content');
-            otherContent.style.maxHeight = null;
-            otherItem.querySelector('.faq-trigger').setAttribute('aria-expanded', 'false');
-          });
-
-          // Toggle current item
-          if (!isActive) {
-            item.classList.add('active');
-            content.style.maxHeight = `${content.scrollHeight}px`;
-            trigger.setAttribute('aria-expanded', 'true');
-          }
-        });
+    // Called when the YouTube API is ready
+    function onYouTubeIframeAPIReady() {
+      player = new YT.Player('player', {
+        height: '100%',
+        width: '100%',
+        videoId: 'vOKI6-g-y7k',
+        playerVars: {
+          'playsinline': 1,
+          'rel': 0,
+          'modestbranding': 1,
+          'controls': 0,      // Oculta completamente a barra de controles (não permite avançar/voltar)
+          'disablekb': 1,     // Desativa atalhos de teclado (espaço, setas) para navegação
+          'fs': 0             // Remove o botão de tela cheia padrão (opcional, ajuda a reter no site)
+        },
+        events: {
+          'onStateChange': onPlayerStateChange
+        }
       });
+    }
 
-      // SMOOTH SCROLL FOR ALL ANCHORS
-      const anchors = document.querySelectorAll('a[href^="#"]');
-      anchors.forEach(anchor => {
-        anchor.addEventListener('click', (e) => {
-          e.preventDefault();
-          const targetId = anchor.getAttribute('href');
-          const targetElement = document.querySelector(targetId);
-          
-          if (targetElement) {
-            targetElement.scrollIntoView({
-              behavior: 'smooth',
-              block: 'start'
-            });
+    // Custom flow to start video on cover click
+    function startVideo() {
+      // Hide the cover
+      var cover = document.getElementById('videoCover');
+      cover.style.opacity = '0';
+      setTimeout(function() {
+        cover.style.display = 'none';
+      }, 500);
+
+      // Play video
+      if (player && typeof player.playVideo === 'function') {
+        player.playVideo();
+      }
+
+      // Show transparent click interceptor
+      document.getElementById('clickInterceptor').style.display = 'block';
+    }
+
+    // Handle play/pause via the interceptor overlay
+    function handlePlayerClick() {
+      if (player && typeof player.getPlayerState === 'function') {
+        var state = player.getPlayerState();
+        if (state === 1) { // Playing
+          player.pauseVideo();
+        } else { // Paused or stopped
+          player.playVideo();
+        }
+      }
+    }
+
+    // Monitor changes in the video state
+    function onPlayerStateChange(event) {
+      var pauseOverlay = document.getElementById('pauseOverlay');
+      
+      if (event.data === 1) { // Playing
+        pauseOverlay.classList.remove('show');
+        setTimeout(function() {
+          if (player.getPlayerState() === 1) {
+            pauseOverlay.style.display = 'none';
           }
-        });
-      });
+        }, 300);
+        startTimer();
+      } else if (event.data === 2) { // Paused
+        pauseOverlay.style.display = 'flex';
+        setTimeout(function() {
+          pauseOverlay.classList.add('show');
+        }, 50);
+        stopTimer();
+      } else {
+        stopTimer();
+      }
+    }
+
+    function startTimer() {
+      if (!timer && !ctaRevealed) {
+        timer = setInterval(function() {
+          // Only increment timer if the tab is active and player is actively playing
+          if (isTabActive && player && player.getPlayerState() === 1) {
+            timeElapsed++;
+            console.log("Tempo assistido: " + timeElapsed + "s / " + delaySeconds + "s");
+            if (timeElapsed >= delaySeconds) {
+              revealCTA();
+              stopTimer();
+            }
+          }
+        }, 1000);
+      }
+    }
+
+    function stopTimer() {
+      if (timer) {
+        clearInterval(timer);
+        timer = null;
+      }
+    }
+
+    function revealCTA() {
+      ctaRevealed = true;
+      
+      const ctaSection = document.getElementById('cta-section');
+      const footerSection = document.getElementById('footer-section');
+      
+      ctaSection.style.display = 'block';
+      footerSection.style.display = 'flex';
+      
+      // Allow minor delay to trigger CSS transition smoothly
+      setTimeout(() => {
+        ctaSection.classList.add('reveal-fade-in');
+        footerSection.classList.add('reveal-fade-in');
+      }, 50);
+    }
+
+    // Developer/Testing hook: Add "?showcta=true" to the URL in your browser to bypass the timer for tests
+    window.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('showcta') === 'true') {
+        revealCTA();
+      }
     });
   </script>
+
 </body>
 </html>
