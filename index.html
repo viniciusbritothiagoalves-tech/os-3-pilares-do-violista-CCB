@@ -57,15 +57,14 @@
       margin: auto 0;
     }
 
-    /* HEADLINE (Using Outfit font for premium look) */
+    /* HEADLINE (Outfit font, standard casing) */
     .headline {
       font-family: 'Outfit', sans-serif;
       font-size: 2.25rem;
       font-weight: 800;
-      line-height: 1.4; /* Increased to prevent text crowding and overlapping */
+      line-height: 1.4; /* Prevents text crowding and overlapping */
       letter-spacing: -0.02em;
       color: #ffffff;
-      text-transform: uppercase;
     }
 
     /* Red glowing pulse animation on the main pain point "SOM" */
@@ -434,7 +433,7 @@
 
   <main class="vsl-container">
     <!-- HEADLINE SECTION -->
-    <h1 class="headline">TOCA VIOLA MAS O <span class="highlight">SOM</span> NÃO SAI COMO VOCÊ QUER?</h1>
+    <h1 class="headline">Toca viola mas o <span class="highlight">SOM</span> não sai como você quer?</h1>
 
     <!-- VIDEO PLAYER SECTION -->
     <div class="video-container">
@@ -496,8 +495,7 @@
 
     var player;
     var timer = null;
-    var delaySeconds = 220; // 3 minutos e 40 segundos = 220 segundos
-    var timeElapsed = 0;
+    var delaySecondsFromEnd = 6; // Revela o CTA faltando 6 segundos para o fim do vídeo
     var isTabActive = true;
     var ctaRevealed = false;
     var isVideoPlaying = false; // Reliable flag to track play state
@@ -598,12 +596,22 @@
       if (!timer && !ctaRevealed) {
         timer = setInterval(function() {
           // Increment timer if the tab is active and video is actively playing
-          if (isTabActive && isVideoPlaying) {
-            timeElapsed++;
-            console.log("Tempo assistido: " + timeElapsed + "s / " + delaySeconds + "s");
-            if (timeElapsed >= delaySeconds) {
-              revealCTA();
-              stopTimer();
+          if (isTabActive && isVideoPlaying && player && typeof player.getCurrentTime === 'function') {
+            try {
+              var currentTime = player.getCurrentTime();
+              var duration = player.getDuration();
+
+              if (duration > 0) {
+                console.log("Tempo atual: " + currentTime + "s / Total: " + duration + "s (Restam " + (duration - currentTime) + "s)");
+                
+                // Revela o CTA quando faltar o tempo especificado (ex: 6 segundos) para o fim do vídeo
+                if (currentTime >= (duration - delaySecondsFromEnd)) {
+                  revealCTA();
+                  stopTimer();
+                }
+              }
+            } catch (e) {
+              console.error("Erro ao ler informações de tempo da API: ", e);
             }
           }
         }, 1000);
