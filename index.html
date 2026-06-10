@@ -446,7 +446,7 @@
 
   <main class="vsl-container">
     <!-- HEADLINE SECTION -->
-    <h1 class="headline">Toca viola mas o <span class="highlight">SOM</span> não sai como você quer?</h1>
+    <h1 class="headline">Toca viola, mas o <span class="highlight">SOM</span> não sai como você quer?</h1>
 
     <!-- VIDEO PLAYER SECTION -->
     <div class="video-container">
@@ -511,7 +511,7 @@
 
     var player;
     var timer = null;
-    var delaySecondsFromEnd = 6; // Revela o CTA faltando 6 segundos para o fim do vídeo
+    var revealTimeSeconds = 235; // Revela o CTA aos 235 segundos (3 minutos e 55 segundos) do vídeo
     var isTabActive = true;
     var ctaRevealed = false;
     var isVideoPlaying = false; // Reliable flag to track play state
@@ -615,16 +615,12 @@
           if (isTabActive && isVideoPlaying && player && typeof player.getCurrentTime === 'function') {
             try {
               var currentTime = player.getCurrentTime();
-              var duration = player.getDuration();
-
-              if (duration > 0) {
-                console.log("Tempo atual: " + currentTime + "s / Total: " + duration + "s (Restam " + (duration - currentTime) + "s)");
-                
-                // Revela o CTA quando faltar o tempo especificado (ex: 6 segundos) para o fim do vídeo
-                if (currentTime >= (duration - delaySecondsFromEnd)) {
-                  revealCTA();
-                  stopTimer();
-                }
+              console.log("Tempo atual: " + currentTime + "s / Objetivo: " + revealTimeSeconds + "s");
+              
+              // Revela o CTA aos 235 segundos
+              if (currentTime >= revealTimeSeconds) {
+                revealCTA();
+                stopTimer();
               }
             } catch (e) {
               console.error("Erro ao ler informações de tempo da API: ", e);
