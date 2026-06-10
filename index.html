@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Os 3 Pilares do Violista CCB</title>
+  <title>3 Pilares da Viola</title>
   <meta name="description" content="Aprenda os 3 pilares essenciais para tocar os hinos com segurança na viola.">
   
   <!-- Preconnect and Load Google Fonts (Inter and Outfit) -->
@@ -39,8 +39,8 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      padding: 2rem 1rem;
+      justify-content: flex-start; /* Align content to the top */
+      padding: 2.5rem 1rem 2rem 1rem;
       /* Premium radial background glow */
       background-image: radial-gradient(circle at 50% 20%, #1e1111 0%, var(--bg-color) 60%);
       overflow-x: hidden;
@@ -54,7 +54,7 @@
       display: flex;
       flex-direction: column;
       gap: 1.75rem;
-      margin: auto 0;
+      margin-top: 1rem; /* Small margin to keep it clean but close to the top */
     }
 
     /* HEADLINE (Outfit font, standard casing) */
@@ -292,6 +292,19 @@
       box-shadow: 0 4px 15px rgba(255, 0, 0, 0.3);
     }
 
+    .price-info {
+      margin-top: 0.85rem;
+      font-size: 1rem;
+      color: var(--text-muted);
+      font-weight: 500;
+      letter-spacing: 0.02em;
+    }
+
+    .price-value {
+      color: #ffffff;
+      font-weight: 700;
+    }
+
     /* Pulse Keyframes */
     @keyframes pulse {
       0% {
@@ -474,6 +487,9 @@
       <a href="https://pay.kiwify.com.br/MpZ3yqi" target="_blank" rel="noopener noreferrer" class="btn-cta" id="cta-vsl">
         Quero começar agora
       </a>
+      <div class="price-info">
+        Apenas <span class="price-value">47,00</span> · pagamento único
+      </div>
     </div>
   </main>
 
@@ -482,7 +498,7 @@
     <div class="footer-links">
       <a href="./politicas.html" class="footer-link">Políticas de Privacidade e Termos de Uso</a>
     </div>
-    <p class="copyright">© 2026 Thiago Brito · Todos os direitos reservados</p>
+    <p class="copyright">© <span id="currentYear">2026</span> Thiago Brito · Todos os direitos reservados</p>
     <p class="disclaimer">Este site é independente e de caráter estritamente educacional. Não possui qualquer vínculo oficial, patrocínio ou associação com a instituição Congregação Cristã no Brasil (CCB).</p>
   </footer>
 
@@ -646,6 +662,12 @@
       const urlParams = new URLSearchParams(window.location.search);
       if (urlParams.get('showcta') === 'true') {
         revealCTA();
+      }
+
+      // Set current year dynamically in footer
+      const yearEl = document.getElementById('currentYear');
+      if (yearEl) {
+        yearEl.textContent = new Date().getFullYear();
       }
     });
   </script>

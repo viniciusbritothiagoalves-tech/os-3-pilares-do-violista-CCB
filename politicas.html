@@ -244,9 +244,15 @@
 
   <!-- FOOTER -->
   <footer>
-    <p class="copyright">© 2026 Thiago Brito · Todos os direitos reservados</p>
+    <p class="copyright">© <span id="currentYear">2026</span> Thiago Brito · Todos os direitos reservados</p>
     <p class="disclaimer">Este site é independente e de caráter estritamente educacional. Não possui qualquer vínculo oficial, patrocínio ou associação com a instituição Congregação Cristã no Brasil (CCB).</p>
   </footer>
 
+  <script>
+    const yearEl = document.getElementById('currentYear');
+    if (yearEl) {
+      yearEl.textContent = new Date().getFullYear();
+    }
+  </script>
 </body>
 </html>
