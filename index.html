@@ -516,6 +516,8 @@
     var isTabActive = true;
     var ctaRevealed = false;
     var isVideoPlaying = false; // Reliable flag to track play state
+    var isPlayerReady = false;
+    var playRequested = false;
 
     // Monitor if the user changes tabs or leaves the page active area
     document.addEventListener("visibilitychange", function() {
@@ -533,32 +535,12 @@
 
     // YouTube API ready callback
     function onYouTubeIframeAPIReady() {
-      // Just flag ready (player created dynamically on click)
-    }
-
-    // Custom flow to start video on cover click
-    function startVideo() {
-      // Se a API do YouTube ainda não carregou, aguarda 200ms e tenta novamente
-      if (typeof YT === 'undefined' || typeof YT.Player === 'undefined') {
-        console.log('API do YouTube carregando... Retentando em 200ms');
-        setTimeout(startVideo, 200);
-        return;
-      }
-
-      // Hide the cover
-      var cover = document.getElementById('videoCover');
-      cover.style.opacity = '0';
-      setTimeout(function() {
-        cover.style.display = 'none';
-      }, 500);
-
-      // Initialize YouTube player dynamically with autoplay enabled
       player = new YT.Player('player', {
         height: '100%',
         width: '100%',
         videoId: 'vOKI6-g-y7k',
         playerVars: {
-          'autoplay': 1,      // Inicia imediatamente com o play do clique
+          'autoplay': 0,      // Do not autoplay on page load
           'playsinline': 1,
           'rel': 0,
           'modestbranding': 1,
@@ -573,9 +555,29 @@
       });
     }
 
+    // Custom flow to start video on cover click
+    function startVideo() {
+      playRequested = true;
+
+      // Hide the cover
+      var cover = document.getElementById('videoCover');
+      cover.style.opacity = '0';
+      setTimeout(function() {
+        cover.style.display = 'none';
+      }, 500);
+
+      // Play video immediately if player is ready
+      if (isPlayerReady && player && typeof player.playVideo === 'function') {
+        player.playVideo();
+      }
+    }
+
     function onPlayerReady(event) {
-      // Garante a reprodução imediata do player
-      event.target.playVideo();
+      isPlayerReady = true;
+      // If user clicked the play button before player was fully loaded, start playing now
+      if (playRequested) {
+        event.target.playVideo();
+      }
     }
 
     // Handle play/pause via the interceptor overlay
