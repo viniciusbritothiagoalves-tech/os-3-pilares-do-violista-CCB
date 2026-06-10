@@ -563,9 +563,6 @@
       if (player && typeof player.playVideo === 'function') {
         player.playVideo();
       }
-
-      // Show transparent click interceptor
-      document.getElementById('clickInterceptor').style.display = 'block';
     }
 
     // Handle play/pause via the interceptor overlay
@@ -583,9 +580,11 @@
     // Monitor changes in the video state
     function onPlayerStateChange(event) {
       var pauseOverlay = document.getElementById('pauseOverlay');
+      var interceptor = document.getElementById('clickInterceptor');
       
       if (event.data === 1) { // Playing
         isVideoPlaying = true;
+        interceptor.style.display = 'block'; // Show blocker only AFTER video starts playing
         pauseOverlay.classList.remove('show');
         setTimeout(function() {
           if (isVideoPlaying) {
