@@ -6,10 +6,10 @@
   <title>Os 3 Pilares do Violista CCB</title>
   <meta name="description" content="Aprenda os 3 pilares essenciais para tocar os hinos com segurança na viola.">
   
-  <!-- Preconnect and Load Google Fonts -->
+  <!-- Preconnect and Load Google Fonts (Inter and Outfit) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Outfit:wght@700;800;900&display=swap" rel="stylesheet">
   
   <style>
     /* CSS RESET & VARIABLES */
@@ -57,18 +57,41 @@
       margin: auto 0;
     }
 
-    /* HEADLINE */
+    /* HEADLINE (Using Outfit font for premium look) */
     .headline {
+      font-family: 'Outfit', sans-serif;
       font-size: 2.25rem;
       font-weight: 800;
-      line-height: 1.15;
-      letter-spacing: -0.03em;
+      line-height: 1.4; /* Increased to prevent text crowding and overlapping */
+      letter-spacing: -0.02em;
       color: #ffffff;
+      text-transform: uppercase;
     }
 
+    /* Red glowing pulse animation on the main pain point "SOM" */
     .headline span.highlight {
       color: var(--primary-color);
-      text-shadow: 0 0 20px rgba(255, 0, 0, 0.4);
+      display: inline-block;
+      font-weight: 900;
+      font-style: italic; /* Slanted italic emphasizes tension */
+      margin-left: 0.05em;  /* Adjusts space for the italic slant */
+      margin-right: 0.18em; /* Ensures "SOM" doesn't touch "NÃO" due to italic tilt */
+      animation: redPulse 2s infinite ease-in-out;
+    }
+
+    @keyframes redPulse {
+      0% {
+        text-shadow: 0 0 10px rgba(255, 0, 0, 0.5), 0 0 20px rgba(255, 0, 0, 0.3);
+        color: #ff1a1a;
+      }
+      50% {
+        text-shadow: 0 0 20px rgba(255, 0, 0, 0.9), 0 0 35px rgba(255, 0, 0, 0.7);
+        color: #ff4d4d; /* Brightens at the peak of the pulse */
+      }
+      100% {
+        text-shadow: 0 0 10px rgba(255, 0, 0, 0.5), 0 0 20px rgba(255, 0, 0, 0.3);
+        color: #ff1a1a;
+      }
     }
 
     /* VIDEO PLAYER & CONTAINER */
@@ -183,7 +206,7 @@
       transform: translateY(-2px);
     }
 
-    /* CUSTOM PAUSE STATE OVERLAY (Only displays custom play button when paused) */
+    /* CUSTOM PAUSE STATE OVERLAY */
     .custom-pause-overlay {
       position: absolute;
       top: 0;
@@ -191,7 +214,7 @@
       width: 100%;
       height: 100%;
       z-index: 7;
-      background: rgba(0, 0, 0, 0.3);
+      background: rgba(0, 0, 0, 0.75);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -202,6 +225,32 @@
 
     .custom-pause-overlay.show {
       opacity: 1;
+    }
+
+    .pause-content-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.25rem;
+      text-align: center;
+      padding: 0 1.5rem;
+    }
+
+    .pause-message {
+      color: #ffffff;
+      font-size: 1.15rem;
+      font-weight: 700;
+      max-width: 450px;
+      line-height: 1.4;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+      opacity: 0;
+      transform: translateY(15px);
+      transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1) 0.1s, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1) 0.1s;
+    }
+
+    .custom-pause-overlay.show .pause-message {
+      opacity: 0.95;
+      transform: translateY(0);
     }
 
     /* CTA BUTTON & LINK */
@@ -335,6 +384,7 @@
 
       .headline {
         font-size: 1.65rem;
+        line-height: 1.35;
         letter-spacing: -0.02em;
         padding: 0 0.25rem;
       }
@@ -375,6 +425,7 @@
     @media (max-width: 380px) {
       .headline {
         font-size: 1.4rem;
+        line-height: 1.3;
       }
     }
   </style>
@@ -383,7 +434,7 @@
 
   <main class="vsl-container">
     <!-- HEADLINE SECTION -->
-    <h1 class="headline">Toca viola mas o <span class="highlight">SOM</span> não sai como você quer?</h1>
+    <h1 class="headline">TOCA VIOLA MAS O <span class="highlight">SOM</span> NÃO SAI COMO VOCÊ QUER?</h1>
 
     <!-- VIDEO PLAYER SECTION -->
     <div class="video-container">
@@ -396,10 +447,13 @@
 
       <!-- Custom Pause overlay -->
       <div class="custom-pause-overlay" id="pauseOverlay">
-        <div class="play-button-wrapper">
-          <svg viewBox="0 0 24 24">
-            <path d="M8 5v14l11-7z"/>
-          </svg>
+        <div class="pause-content-wrapper">
+          <div class="play-button-wrapper">
+            <svg viewBox="0 0 24 24">
+              <path d="M8 5v14l11-7z"/>
+            </svg>
+          </div>
+          <p class="pause-message">Seu som na viola pode mudar hoje. Clique para continuar assistindo...</p>
         </div>
       </div>
 
@@ -446,6 +500,7 @@
     var timeElapsed = 0;
     var isTabActive = true;
     var ctaRevealed = false;
+    var isVideoPlaying = false; // Reliable flag to track play state
 
     // Monitor if the user changes tabs or leaves the page active area
     document.addEventListener("visibilitychange", function() {
@@ -454,8 +509,8 @@
         stopTimer();
       } else {
         isTabActive = true;
-        // Resume timer if video is actively playing
-        if (player && player.getPlayerState() === 1) { // 1 is Playing in YouTube API
+        // Resume timer if video was playing
+        if (isVideoPlaying) {
           startTimer();
         }
       }
@@ -473,7 +528,7 @@
           'modestbranding': 1,
           'controls': 0,      // Oculta completamente a barra de controles (não permite avançar/voltar)
           'disablekb': 1,     // Desativa atalhos de teclado (espaço, setas) para navegação
-          'fs': 0             // Remove o botão de tela cheia padrão (opcional, ajuda a reter no site)
+          'fs': 0             // Remove o botão de tela cheia padrão
         },
         events: {
           'onStateChange': onPlayerStateChange
@@ -516,20 +571,25 @@
       var pauseOverlay = document.getElementById('pauseOverlay');
       
       if (event.data === 1) { // Playing
+        isVideoPlaying = true;
         pauseOverlay.classList.remove('show');
         setTimeout(function() {
-          if (player.getPlayerState() === 1) {
+          if (isVideoPlaying) {
             pauseOverlay.style.display = 'none';
           }
         }, 300);
         startTimer();
       } else if (event.data === 2) { // Paused
+        isVideoPlaying = false;
         pauseOverlay.style.display = 'flex';
         setTimeout(function() {
-          pauseOverlay.classList.add('show');
+          if (!isVideoPlaying) {
+            pauseOverlay.classList.add('show');
+          }
         }, 50);
         stopTimer();
       } else {
+        isVideoPlaying = false;
         stopTimer();
       }
     }
@@ -537,8 +597,8 @@
     function startTimer() {
       if (!timer && !ctaRevealed) {
         timer = setInterval(function() {
-          // Only increment timer if the tab is active and player is actively playing
-          if (isTabActive && player && player.getPlayerState() === 1) {
+          // Increment timer if the tab is active and video is actively playing
+          if (isTabActive && isVideoPlaying) {
             timeElapsed++;
             console.log("Tempo assistido: " + timeElapsed + "s / " + delaySeconds + "s");
             if (timeElapsed >= delaySeconds) {
