@@ -678,6 +678,13 @@
     function revealCTA() {
       ctaRevealed = true;
       
+      // Salva no localStorage para lembrar que o usuário já viu o CTA nesta máquina/navegador
+      try {
+        localStorage.setItem('cta_revealed', 'true');
+      } catch (e) {
+        console.warn("localStorage não disponível: ", e);
+      }
+      
       const ctaSection = document.getElementById('cta-section');
       const footerSection = document.getElementById('footer-section');
       
@@ -694,7 +701,16 @@
     // Developer/Testing hook: Add "?showcta=true" to the URL in your browser to bypass the timer for tests
     window.addEventListener('DOMContentLoaded', () => {
       const urlParams = new URLSearchParams(window.location.search);
-      if (urlParams.get('showcta') === 'true') {
+      
+      // Verifica se o usuário já viu o CTA anteriormente
+      let hasSeenCTA = false;
+      try {
+        hasSeenCTA = localStorage.getItem('cta_revealed') === 'true';
+      } catch (e) {
+        console.warn("Não foi possível acessar o localStorage: ", e);
+      }
+
+      if (urlParams.get('showcta') === 'true' || hasSeenCTA) {
         revealCTA();
       }
 
